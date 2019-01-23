@@ -1,0 +1,68 @@
+body{
+  background-color: black;
+}
+.game {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+  background-color: black;
+}
+
+.container {
+  width: 700px;
+  height: 768px;
+  margin: 50px auto;
+  display: grid;
+  grid-template: repeat(31,24.8px) /repeat(28, 25px);
+  background-image: url('assets/img/pacman-board.png');
+  background-size:100%;
+  background-repeat: no-repeat;
+}
+.red,.pin,.ora,.blu {
+ margin-top: -7px;
+}
+.empty.pacman{
+  background-size: 25px 24px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.pacman-left{
+  background-image: url('assets/img/pacman-left.gif');
+}
+.pacman-right{
+  background-image: url('assets/img/pacman-right.gif');
+}
+.pacman-up{
+  background-image: url('assets/img/pacman-up.gif');
+}
+.pacman-down{
+  background-image: url('assets/img/pacman-down.gif');
+}
+
+.dot{
+  background-image: url('assets/img/dot-pacman.png');
+  background-size: 15px 15px;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+.big-dot{
+  background-image: url('assets/img/dot-pacman.png');
+  background-size: 35px 35px;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+.score{
+  display: flex;
+  justify-content: center;
+}
+h2{
+  padding: 20px;
+  color: #fff;
+  font-size: 1.7em;
+}
+img{
+  width: 33px;
+  height: 33px;
+}
