@@ -85,25 +85,25 @@ const initBoard = () =>{
         case 'R': //R is red (blinky)
           let blinky = document.createElement('img');
           blinky.src = "assets/img/red.png";
-          currentTile.className = 'empty red';
+          currentTile.className = 'empty blinky';
           currentTile.appendChild(blinky);
           break;
         case 'B': //B is blue (inky)
           let inky = document.createElement('img');
           inky.src = "assets/img/blue.png";
-          currentTile.className = 'empty blu';
+          currentTile.className = 'empty inky';
           currentTile.appendChild(inky);
           break;
         case 'Pi': //P is pink (pinky)
           let pinky = document.createElement('img');
           pinky.src = "assets/img/pink.png";
-          currentTile.className = 'empty pin';
+          currentTile.className = 'empty pinky';
           currentTile.appendChild(pinky);
           break;
         case 'O': //O is orange (clyde)
           let clyde = document.createElement('img');
           clyde.src = "assets/img/orange.png";
-          currentTile.className = 'empty ora';
+          currentTile.className = 'empty clyde';
           currentTile.appendChild(clyde);
         break;
       }
@@ -180,6 +180,10 @@ class Character {
           this.stopped  = true;
           return;
         }
+      }
+      else if(this.i===0 && this.name !== 'pacman'){
+        this.tile.style.transform = 'none';
+        this.testDirections();
       }
       switch (this.direction){
         case 'right':
@@ -289,26 +293,99 @@ class Pacman extends Character {
   }
 }
 
+class Ghost extends Character {
+  constructor(name,tile,x,y){
+    super(name,tile,x,y);
+    this.i = 0;
+    this.direction ='right';
+    this.possibleDirections;
+    this.test = true;
+    this.animation;
+  }
+  getRandomDirection(){
+    let randomNumber = Math.floor(Math.random() * (this.possibleDirections.length))+1;
+    let randomDirection = this.possibleDirections[randomNumber-1];
+    switch (randomDirection){
+      case 1 :
+        this.direction = 'right';
+        this.y+=1;
+        break;
+      case 2 :
+        this.direction = 'left';
+        this.y-=1;
+        break;
+      case 3 :
+        this.direction = 'down';
+        this.x+=1;
+        break;
+      case 4 :
+        this.direction = 'up';
+        this.x-=1;
+        break;
+    }
+    console.log(this.direction);
+  }
+
+  move(){
+    console.log('move');
+    this.tile.style.transform = 'none';
+    this.tile.classList.remove(this.name);
+    let node = this.tile.firstElementChild;
+    this.tile.removeChild(node);
+    this.tile = document.querySelector(`div[data-row='${this.x}'][data-column='${this.y}']`);
+    this.tile.classList.add(this.name);
+    this.tile.appendChild(node);
+    cancelAnimationFrame(this.animation);
+    this.animation = requestAnimationFrame(() => this.animate());
+  }
+
+  outOfBase(){
+    console.log('outofbox');
+  }
+
+  testDirections(){
+    console.log(this);
+    let possibleDirectionsArray = [];
+    if(this.y+1 <= gridWidth && board[this.x][this.y+1] !== 1 && this.direction !== 'left'){  //test for direction is to avoid the ghosts turning around
+      possibleDirectionsArray.push(1);
+    }
+    if(this.y-1 >= 0 && board[this.x][this.y-1] !== 1 && this.direction !== 'right'){
+      possibleDirectionsArray.push(2);
+    }
+    if(this.x+1 <= gridHeight && board[this.x+1][this.y] !== 1 && this.direction !== 'up'){
+      possibleDirectionsArray.push(3);
+    }
+    if(this.x-1 >= 0 && board[this.x-1][this.y] !== 1 && this.direction !== 'down'){
+      possibleDirectionsArray.push(4);
+    }
+    this.possibleDirections = possibleDirectionsArray;
+    console.log(this.possibleDirections);
+    this.getRandomDirection();
+  }
+
+  backToBase(){
+    console.log('back');
+  }
+}
+
 let pacman = new Pacman('pacman',document.querySelector('.pacman'),23,14);
-let blinky = new Character('red', document.querySelector('.red'),11,13);
+let blinky = new Ghost('blinky', document.querySelector('.blinky'),11,13);
 
 function keydownHandler(e){
   e.preventDefault();
   if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 'ArrowLeft'){
     let input = e.key.substring(5).toLowerCase();
-    if (input !== pacman.direction){
-      if(!pacman.stopped){
-       console.log('on sarrete pas nous');
-       pacman.nextDirection = input;
-      }
-      else if(pacman.stopped){
-        pacman.nextDirection = input;
-        pacman.turn();
-        pacman.animate();
-      }
+    if(!pacman.stopped){
+      pacman.nextDirection = input;
+    }
+    else if (input !== pacman.direction && pacman.stopped){
+      pacman.nextDirection = input;
+      pacman.turn();
+      pacman.animate();
     }
   }
 }
 
 document.addEventListener('keydown', keydownHandler);
 pacman.move();
+blinky.move();

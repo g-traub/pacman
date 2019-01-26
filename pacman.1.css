@@ -20,8 +20,13 @@ body{
   background-size:100%;
   background-repeat: no-repeat;
 }
-.red,.pin,.ora,.blu {
+.blinky,.inky,.pinky,.clyde {
  margin-top: -7px;
+ opacity: 1;
+}
+.blinky img{
+  opacity: 1;
+  height:95%;
 }
 .empty.pacman{
   background-size: 25px 24px;
