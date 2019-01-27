@@ -10,7 +10,7 @@ const board = [
   [1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1], 
   [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 6, 1, 1, 6, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
   [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 6, 1, 1, 6, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
-  [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 6, 'R', 6, 6, 6, 6, 6, 6, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
+  [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 6, 6, 6, 'R', 6, 6, 6, 6, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
   [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
   [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
   [1, 1, 1, 1, 1, 1, 0, 6, 6, 6, 1, 'B', 1,'Pi', 1, 'O', 1, 1, 6, 6, 6, 0, 1, 1, 1, 1, 1, 1], 
@@ -85,24 +85,28 @@ const initBoard = () =>{
         case 'R': //R is red (blinky)
           let blinky = document.createElement('img');
           blinky.src = "assets/img/red.png";
+          blinky.id = 'blinky';
           currentTile.className = 'empty blinky';
           currentTile.appendChild(blinky);
           break;
         case 'B': //B is blue (inky)
           let inky = document.createElement('img');
           inky.src = "assets/img/blue.png";
+          inky.id = 'inky';
           currentTile.className = 'empty inky';
           currentTile.appendChild(inky);
           break;
         case 'Pi': //P is pink (pinky)
           let pinky = document.createElement('img');
           pinky.src = "assets/img/pink.png";
+          pinky.id = 'pinky';
           currentTile.className = 'empty pinky';
           currentTile.appendChild(pinky);
           break;
         case 'O': //O is orange (clyde)
           let clyde = document.createElement('img');
           clyde.src = "assets/img/orange.png";
+          clyde.id = 'clyde';
           currentTile.className = 'empty clyde';
           currentTile.appendChild(clyde);
         break;
@@ -294,13 +298,15 @@ class Pacman extends Character {
 }
 
 class Ghost extends Character {
-  constructor(name,tile,x,y){
+  constructor(name,tile,x,y,out){
     super(name,tile,x,y);
+    this.out = out;
     this.i = 0;
-    this.direction ='right';
+    this.direction = 'right';
     this.possibleDirections;
     this.test = true;
     this.animation;
+    
   }
   getRandomDirection(){
     let randomNumber = Math.floor(Math.random() * (this.possibleDirections.length))+1;
@@ -323,28 +329,69 @@ class Ghost extends Character {
         this.x-=1;
         break;
     }
-    console.log(this.direction);
   }
 
   move(){
-    console.log('move');
     this.tile.style.transform = 'none';
     this.tile.classList.remove(this.name);
-    let node = this.tile.firstElementChild;
+    let node = this.tile.querySelector(`#${this.name}`);
     this.tile.removeChild(node);
     this.tile = document.querySelector(`div[data-row='${this.x}'][data-column='${this.y}']`);
     this.tile.classList.add(this.name);
     this.tile.appendChild(node);
     cancelAnimationFrame(this.animation);
-    this.animation = requestAnimationFrame(() => this.animate());
+    if(this.out){
+      this.animation = requestAnimationFrame(() => this.animate());
+    }
   }
 
   outOfBase(){
-    console.log('outofbox');
+    let difference = 13 - this.y;
+    //move to central tile of base(14,13);
+    if (difference > 0){
+      this.direction = 'right';
+      this.animation = requestAnimationFrame(() => this.outOfBaseAnimate());
+    }
+    else if (difference < 0){
+      this.direction = 'left';
+      this.animation = requestAnimationFrame(() => this.outOfBaseAnimate());
+    }
+    else if (difference === 0){
+      this.direction = 'up';
+      this.animation = requestAnimationFrame(()  => this.outOfBaseAnimate());
+    }
+  }
+
+  outOfBaseAnimate(){
+    this.i+=10
+    switch (this.direction){
+      case 'right':
+        this.tile.style.transform = `translateX(${this.i}%)`;
+        break;
+      case 'left':
+        this.tile.style.transform = `translateX(-${this.i}%)`;
+        break;
+      case 'up':
+        this.tile.style.transform = `translateY(-${this.i}%)`;
+        break;
+    }
+    if (this.direction !== 'up' && this.i > 190){
+      this.y = 13;
+      this.i = 0;
+      this.direction = 'up';
+      this.move();
+    }
+    else if(this.i===300){
+      this.x = 11;
+      this.y = 13;
+      this.i = 0;
+      this.out = true;
+      this.move();
+    }
+    this.animation = requestAnimationFrame(() => this.outOfBaseAnimate());
   }
 
   testDirections(){
-    console.log(this);
     let possibleDirectionsArray = [];
     if(this.y+1 <= gridWidth && board[this.x][this.y+1] !== 1 && this.direction !== 'left'){  //test for direction is to avoid the ghosts turning around
       possibleDirectionsArray.push(1);
@@ -359,7 +406,6 @@ class Ghost extends Character {
       possibleDirectionsArray.push(4);
     }
     this.possibleDirections = possibleDirectionsArray;
-    console.log(this.possibleDirections);
     this.getRandomDirection();
   }
 
@@ -368,8 +414,12 @@ class Ghost extends Character {
   }
 }
 
+//OBJECTS
 let pacman = new Pacman('pacman',document.querySelector('.pacman'),23,14);
-let blinky = new Ghost('blinky', document.querySelector('.blinky'),11,13);
+let blinky = new Ghost('blinky',document.querySelector('.blinky'),11,13, true);
+let pinky =  new  Ghost('pinky',document.querySelector('.pinky'),14,13, false);
+let inky = new Ghost('inky',document.querySelector('.inky'),14,11, false);
+let clyde = new Ghost('clyde',document.querySelector('.clyde'),14,15, false);
 
 function keydownHandler(e){
   e.preventDefault();
@@ -389,3 +439,6 @@ function keydownHandler(e){
 document.addEventListener('keydown', keydownHandler);
 pacman.move();
 blinky.move();
+setTimeout(() => pinky.outOfBase(), 1000);
+setTimeout(() => inky.outOfBase(), 8000);
+setTimeout(() => clyde.outOfBase(), 15000);

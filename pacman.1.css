@@ -21,12 +21,11 @@ body{
   background-repeat: no-repeat;
 }
 .blinky,.inky,.pinky,.clyde {
- margin-top: -7px;
+ text-align:  center;
  opacity: 1;
-}
-.blinky img{
-  opacity: 1;
-  height:95%;
+ display: flex;
+ overflow: hidden;
+ margin: -2px;
 }
 .empty.pacman{
   background-size: 25px 24px;
@@ -68,6 +67,5 @@ h2{
   font-size: 1.7em;
 }
 img{
-  width: 33px;
-  height: 33px;
+  width:100%;
 }
