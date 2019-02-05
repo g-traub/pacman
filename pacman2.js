@@ -78,8 +78,10 @@ const scoreNode =  document.querySelector('.score__number');
 const livesNode = document.querySelector('.lives');
 const gameoverNodes = document.querySelector('.gameover');
 const gameOnNodes = document.querySelector('.gameOn');
+const highScoreNode = document.querySelector('.highScore');
+
 let score = 0;
-let lives = 3;
+let lives = 1;
 let reset = true;
 let game = true;
 let level = 1;
@@ -224,6 +226,11 @@ const resetPositions = () => {
   }
   livesNode.innerHTML = lives;
   if (lives === 0){
+    let highScore = parseInt(localStorage.getItem("highScore"));
+    if (!highScore || score >= highScore){
+      highScoreNode.innerHTML = score;
+      localStorage.setItem('highScore', score);
+    }
     game = false;
     gameOnNodes.style.display = 'none';
     gameoverNodes.style.display = 'flex';
