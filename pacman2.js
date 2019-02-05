@@ -1,4 +1,4 @@
-const board = [
+const initialBoard = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
   [1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1], 
@@ -31,18 +31,64 @@ const board = [
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]];
 
+  let board = [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1], 
+    [1, 8, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 8, 1], 
+    [1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1], 
+    [1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 6, 1, 1, 6, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
+    [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 6, 1, 1, 6, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
+    [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 6, 6, 6, 'R', 6, 6, 6, 6, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
+    [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
+    [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
+    [1, 1, 1, 1, 1, 1, 0, 6, 6, 6, 1, 'B', 1,'Pi', 1, 'O', 1, 1, 6, 6, 6, 0, 1, 1, 1, 1, 1, 1], 
+    [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
+    [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
+    [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
+    [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
+    [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1], 
+    [1, 8, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 8, 1], 
+    [1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'P', 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1], 
+    [1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1], 
+    [1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1], 
+    [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]];
+  
 /*
 red (déja sorti) 11x 13y
-blue 14x 12y
-rose 14x 14y
-orange 14x 16y
+blue 14x 11y
+rose 14x 13y
+orange 14x 15y
 */
 
 const boxes = document.querySelectorAll('.container div');
 const gridWidth = 27;
 const gridHeight = 30;
-const scoreNode =  document.querySelector(".score__number");
+const scoreNode =  document.querySelector('.score__number');
+const livesNode = document.querySelector('.lives');
+const gameoverNodes = document.querySelector('.gameover');
+const gameOnNodes = document.querySelector('.gameOn');
 let score = 0;
+let lives = 3;
+let reset = true;
+let game = true;
+let level = 1;
+let levelUp = false;
+let pacman;
+let blinky;
+let inky;
+let pinky;
+let clyde;
 
 const numerote = () => {
   //Numérote les rangs et colonnes
@@ -62,7 +108,7 @@ const numerote = () => {
   }
 }
 
-const initBoard = () =>{
+const initBoard = (board) =>{
   for (let i=0 ; i<board.length; i++){
     for(let j=0 ; j<board[i].length ; j++){
       let currentTile = document.querySelector(`div[data-row='${i}'][data-column='${j}']`);
@@ -86,28 +132,28 @@ const initBoard = () =>{
           let blinky = document.createElement('img');
           blinky.src = "assets/img/red.png";
           blinky.id = 'blinky';
-          currentTile.className = 'empty blinky';
+          currentTile.className = 'empty ghost blinky';
           currentTile.appendChild(blinky);
           break;
         case 'B': //B is blue (inky)
           let inky = document.createElement('img');
           inky.src = "assets/img/blue.png";
           inky.id = 'inky';
-          currentTile.className = 'empty inky';
+          currentTile.className = 'empty ghost inky';
           currentTile.appendChild(inky);
           break;
         case 'Pi': //P is pink (pinky)
           let pinky = document.createElement('img');
           pinky.src = "assets/img/pink.png";
           pinky.id = 'pinky';
-          currentTile.className = 'empty pinky';
+          currentTile.className = 'empty ghost pinky';
           currentTile.appendChild(pinky);
           break;
         case 'O': //O is orange (clyde)
           let clyde = document.createElement('img');
           clyde.src = "assets/img/orange.png";
           clyde.id = 'clyde';
-          currentTile.className = 'empty clyde';
+          currentTile.className = 'empty ghost clyde';
           currentTile.appendChild(clyde);
         break;
       }
@@ -115,8 +161,86 @@ const initBoard = () =>{
   }
 }
 
+const resetPositions = () => {
+  console.log('reset');
+  reset = true;
+  //pacman
+  cancelAnimationFrame(pacman.animation);
+  pacman.tile.className = 'empty';
+  pacman.tile.style.transform = 'none';
+  pacman.i = 0;
+  pacman.direction ='right';
+  pacman.nextDirection = undefined;
+  pacman.stopped = true;
+  pacman.test = true;
+  pacman.turnTest = false;
+  pacman.x = 23;
+  pacman.y = 14;
+  pacman.tile = document.querySelector(`div[data-row='${pacman.x}'][data-column='${pacman.y}']`);
+
+  //ghosts
+  cancelAnimationFrame(blinky.animation);
+  cancelAnimationFrame(inky.animation);cancelAnimationFrame(pinky.animation);cancelAnimationFrame(clyde.animation);
+  clearTimeout(timeoutPinky);
+  clearTimeout(timeoutInky);
+  clearTimeout(timeoutClyde);
+  blinky.i = 0;
+  blinky.tile.className = 'empty';
+  blinky.tile.innerHTML = '';
+  blinky.x = 11;
+  blinky.y = 13;
+  blinky.tile = document.querySelector(`div[data-row='${blinky.x}'][data-column='${blinky.y}']`);
+  inky.i = 0;
+  inky.out = false;
+  inky.tile.className = 'empty';
+  inky.tile.innerHTML = '';  
+  inky.tile.style.transform = 'none';
+  inky.x = 14;
+  inky.y = 11;
+  inky.tile = document.querySelector(`div[data-row='${inky.x}'][data-column='${inky.y}']`);
+  pinky.i = 0;
+  pinky.out = false;
+  pinky.tile.className = 'empty';
+  pinky.tile.innerHTML = '';
+  pinky.tile.style.transform = 'none';
+  pinky.x = 14;
+  pinky.y = 13;
+  pinky.tile = document.querySelector(`div[data-row='${pinky.x}'][data-column='${pinky.y}']`);
+  clyde.i = 0;
+  clyde.out = false;
+  clyde.tile.className = 'empty';
+  clyde.tile.innerHTML = '';
+  clyde.tile.style.transform = 'none';
+  clyde.x = 14;
+  clyde.y = 15;
+  clyde.tile = document.querySelector(`div[data-row='${clyde.x}'][data-column='${clyde.y}']`);
+  //lives and gameover
+  if(levelUp){
+    lives ++;
+    level ++;
+  } 
+  else {
+    lives --;
+  }
+  livesNode.innerHTML = lives;
+  if (lives === 0){
+    game = false;
+    gameOnNodes.style.display = 'none';
+    gameoverNodes.style.display = 'flex';
+  }
+  //resets positions
+  if(game){
+    if(levelUp){
+      levelUp = false;
+      board = initialBoard;
+    }
+    initBoard(board);
+  }
+}
+
 numerote();
-initBoard();
+initBoard(initialBoard);
+livesNode.innerHTML = lives;
 
 class Character {
   constructor(name,tile,x,y) {
@@ -246,14 +370,35 @@ class Pacman extends Character {
     this.tile.classList.add(this.name);
     this.tile.classList.add(`pacman-${this.direction}`);
     //Handles score count
-    if (this.tile.classList.contains('big-dot')){
+    if (this.tile.classList.contains('ghost')){
+      console.log('death');
+      resetPositions();  
+      return;  
+    }
+    else if (this.tile.classList.contains('big-dot')){
       this.tile.classList.remove('big-dot');
       this.tile.classList.remove('dot');
       score += 50;
+      if (score >= level*2610){
+        if(!document.querySelector('.dot')){
+          levelUp = true;
+          resetPositions();  
+          return; 
+        }
+      }
+      board[this.x][this.y] = 6;
       scoreNode.innerHTML = score;
     }else if (this.tile.classList.contains('dot')){
       this.tile.classList.remove('dot');
       score += 10;
+      board[this.x][this.y] = 6;
+      if (score >= level*2610){
+        if(!document.querySelector('.dot')){
+          levelUp = true;
+          resetPositions();  
+          return; 
+        }
+      }
       scoreNode.innerHTML = score;
     }
     this.animation = requestAnimationFrame(() => this.animate());
@@ -334,11 +479,22 @@ class Ghost extends Character {
   move(){
     this.tile.style.transform = 'none';
     this.tile.classList.remove(this.name);
+    this.tile.classList.remove('ghost');
     let node = this.tile.querySelector(`#${this.name}`);
-    this.tile.removeChild(node);
+    if(node){
+      this.tile.removeChild(node);
+    }
     this.tile = document.querySelector(`div[data-row='${this.x}'][data-column='${this.y}']`);
+    if (this.tile.classList.contains('pacman')){
+      console.log('death ghost');
+      resetPositions();
+      return;    
+    }
     this.tile.classList.add(this.name);
-    this.tile.appendChild(node);
+    this.tile.classList.add('ghost');
+    if(node){
+      this.tile.appendChild(node);
+    }  
     cancelAnimationFrame(this.animation);
     if(this.out){
       this.animation = requestAnimationFrame(() => this.animate());
@@ -415,30 +571,61 @@ class Ghost extends Character {
 }
 
 //OBJECTS
-let pacman = new Pacman('pacman',document.querySelector('.pacman'),23,14);
-let blinky = new Ghost('blinky',document.querySelector('.blinky'),11,13, true);
-let pinky =  new  Ghost('pinky',document.querySelector('.pinky'),14,13, false);
-let inky = new Ghost('inky',document.querySelector('.inky'),14,11, false);
-let clyde = new Ghost('clyde',document.querySelector('.clyde'),14,15, false);
+function initCharacters () {
+  pacman = new Pacman('pacman',document.querySelector('.pacman'),23,14);
+  blinky = new Ghost('blinky',document.querySelector('.blinky'),11,13, true);
+  pinky =  new  Ghost('pinky',document.querySelector('.pinky'),14,13, false);
+  inky = new Ghost('inky',document.querySelector('.inky'),14,11, false);
+  clyde = new Ghost('clyde',document.querySelector('.clyde'),14,15, false);
+}
+
+
+function startMoving(){
+    pacman.move();
+    blinky.move();
+    timeoutPinky = setTimeout(() => pinky.outOfBase(), 1000);
+    timeoutInky = setTimeout(() => inky.outOfBase(), 8000);
+    timeoutClyde = setTimeout(() => clyde.outOfBase(), 15000);
+    reset = false;
+}
 
 function keydownHandler(e){
   e.preventDefault();
-  if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 'ArrowLeft'){
-    let input = e.key.substring(5).toLowerCase();
-    if(!pacman.stopped){
-      pacman.nextDirection = input;
+  if (game){
+    if (reset){
+      startMoving();
     }
-    else if (input !== pacman.direction && pacman.stopped){
-      pacman.nextDirection = input;
-      pacman.turn();
-      pacman.animate();
+    else{
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 'ArrowLeft'){
+        let input = e.key.substring(5).toLowerCase();
+        if(!pacman.stopped){
+          pacman.nextDirection = input;
+        }
+        else if (input !== pacman.direction && pacman.stopped){
+          pacman.nextDirection = input;
+          pacman.turn();
+          pacman.animate();
+        }
+      }
+    }
+  }
+  else {
+    if (e.keyCode === 32){
+      initBoard(initialBoard);
+      score = 0;
+      lives = 3;
+      game = true;
+      scoreNode.innerHTML = score;
+      livesNode.innerHTML = lives;
+      gameOnNodes.style.display = 'flex';
+      gameoverNodes.style.display = 'none';
     }
   }
 }
 
 document.addEventListener('keydown', keydownHandler);
-pacman.move();
-blinky.move();
-setTimeout(() => pinky.outOfBase(), 1000);
-setTimeout(() => inky.outOfBase(), 8000);
-setTimeout(() => clyde.outOfBase(), 15000);
+initCharacters();
+
+let timeoutPinky;
+let timeoutInky;
+let timeoutClyde;

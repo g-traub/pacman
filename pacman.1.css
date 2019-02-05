@@ -57,14 +57,29 @@ body{
   background-position: center center;
   background-repeat: no-repeat;
 }
-.score{
+ .gameOn, .gameover{
   display: flex;
   justify-content: center;
+  align-items: center;
+}
+.gameover {
+  flex-direction: column;
+  display: none;
+}
+h1{
+  padding: 20px;
+  color: yellow;
+  font-size: 2rem;
 }
 h2{
   padding: 20px;
   color: #fff;
-  font-size: 1.7em;
+  font-size: 2rem;
+}
+p{
+  padding: 20px;
+  color: #fff;
+  font-size: 2rem;
 }
 img{
   width:100%;
