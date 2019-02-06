@@ -505,6 +505,7 @@ class Ghost extends Character {
     this.direction = 'right';
     this.possibleDirections;
     this.test = true;
+    this.nextDirection;
     this.animation;
     this.interval;
     this.offTimeout;
@@ -559,7 +560,11 @@ class Ghost extends Character {
     this.tile.classList.add('ghost');
     if(node){
       this.tile.appendChild(node);
-    }  
+    }
+    if (this.nextDirection){
+      this.direction = this.nextDirection;
+      this.nextDirection = undefined;
+    }
     cancelAnimationFrame(this.animation);
     if(this.out){
       this.animation = requestAnimationFrame(() => this.animate());
@@ -621,28 +626,23 @@ class Ghost extends Character {
     img.src = "assets/img/ghost.png";
     this.tile.innerHTML = '';
     this.tile.appendChild(img);
-    ghostmode = true;
     if(!ghostmode){
-      this.i = 0;
     switch(this.direction){
       case 'right':
-        this.direction = 'left';
-        this.y-=1;
+        this.nextDirection = 'left';
         break;
       case 'left':
-        this.direction = 'right';
-        this.y+=1;
+        this.nextDirection = 'right';
         break;
       case 'up':
-        this.direction = 'down';
-        this.x+=1
+        this.nextDirection = 'down';
         break;
       case 'down':
-        this.direction = 'up';
-        this.x-=1;
+        this.nextDirection = 'up';
         break;
       }
     }
+    ghostmode = true;
     this.blinkTimeout = setTimeout(()=> {
       this.interval = setInterval(() => {
         this.tile.firstElementChild.classList.toggle('blink');
