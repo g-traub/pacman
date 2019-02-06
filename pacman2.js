@@ -86,11 +86,17 @@ let reset = true;
 let game = true;
 let level = 1;
 let levelUp = false;
+let ghostmode = false;
 let pacman;
 let blinky;
 let inky;
 let pinky;
 let clyde;
+
+//variables d'intervals et de timeout pour pouvoir les arreter lors d'un reset
+let timeoutPinky;
+let timeoutInky;
+let timeoutClyde;
 
 const numerote = () => {
   //Numérote les rangs et colonnes
@@ -132,28 +138,28 @@ const initBoard = (board) =>{
           break;
         case 'R': //R is red (blinky)
           let blinky = document.createElement('img');
-          blinky.src = "assets/img/red.png";
+          blinky.src = "assets/img/blinky.png";
           blinky.id = 'blinky';
           currentTile.className = 'empty ghost blinky';
           currentTile.appendChild(blinky);
           break;
         case 'B': //B is blue (inky)
           let inky = document.createElement('img');
-          inky.src = "assets/img/blue.png";
+          inky.src = "assets/img/inky.png";
           inky.id = 'inky';
           currentTile.className = 'empty ghost inky';
           currentTile.appendChild(inky);
           break;
         case 'Pi': //P is pink (pinky)
           let pinky = document.createElement('img');
-          pinky.src = "assets/img/pink.png";
+          pinky.src = "assets/img/pinky.png";
           pinky.id = 'pinky';
           currentTile.className = 'empty ghost pinky';
           currentTile.appendChild(pinky);
           break;
         case 'O': //O is orange (clyde)
           let clyde = document.createElement('img');
-          clyde.src = "assets/img/orange.png";
+          clyde.src = "assets/img/clyde.png";
           clyde.id = 'clyde';
           currentTile.className = 'empty ghost clyde';
           currentTile.appendChild(clyde);
@@ -186,6 +192,19 @@ const resetPositions = () => {
   clearTimeout(timeoutPinky);
   clearTimeout(timeoutInky);
   clearTimeout(timeoutClyde);
+  clearTimeout(blinky.offTimeout);
+  clearTimeout(inky.offTimeout);
+  clearTimeout(pinky.offTimeout);
+  clearTimeout(clyde.offTimeout);
+  clearTimeout(blinky.blinkTimeout);
+  clearTimeout(inky.blinkTimeout);
+  clearTimeout(pinky.blinkTimeout);
+  clearTimeout(clyde.blinkTimeout);
+  clearInterval(blinky.interval);
+  clearInterval(inky.interval);
+  clearInterval(pinky.interval);
+  clearInterval(clyde.interval);
+
   blinky.i = 0;
   blinky.tile.className = 'empty';
   blinky.tile.innerHTML = '';
@@ -359,6 +378,7 @@ class Pacman extends Character {
     this.test = true;
     this.turnTest = false;
     this.animation;
+    this.numberEaten = 1;
   }
 
   turn(){
@@ -377,14 +397,42 @@ class Pacman extends Character {
     this.tile.classList.add(this.name);
     this.tile.classList.add(`pacman-${this.direction}`);
     //Handles score count
+    
     if (this.tile.classList.contains('ghost')){
-      console.log('death');
-      resetPositions();  
-      return;  
+      if(ghostmode){
+        console.log('eaten');
+        let ghostName;
+        if (pacman.x === blinky.x && pacman.y === blinky.y){
+          ghostName = 'blinky';
+        }
+        else if (pacman.x === pinky.x && pacman.y === pinky.y){
+          ghostName = 'pinky';
+        }
+        else if (pacman.x === inky.x && pacman.y === inky.y){
+          ghostName = 'inky';
+        }
+        else if (pacman.x === clyde.x && pacman.y === clyde.y){
+          ghostName = 'clyde';
+        }
+        console.log(ghostName);
+        console.log(`pacman : ${pacman.x} ; ${pacman.y}`);
+        console.log(`blinky : ${blinky.x} ; ${blinky.y}`);
+        console.log(`pinky : ${pinky.x} ; ${pinky.y}`);
+        console.log(`inky : ${inky.x} ; ${inky.y}`);
+        console.log(`clyde : ${clyde.x} ; ${clyde.y}`);
+        this.numberEaten ++;
+        score += 200 * this.numberEaten;
+      }
+      else{ 
+        console.log('death');
+        resetPositions();  
+        return; 
+      }
     }
     else if (this.tile.classList.contains('big-dot')){
       this.tile.classList.remove('big-dot');
       this.tile.classList.remove('dot');
+      ghost();
       score += 50;
       if (score >= level*2610){
         if(!document.querySelector('.dot')){
@@ -458,7 +506,9 @@ class Ghost extends Character {
     this.possibleDirections;
     this.test = true;
     this.animation;
-    
+    this.interval;
+    this.offTimeout;
+    this.blinkTimeout;
   }
   getRandomDirection(){
     let randomNumber = Math.floor(Math.random() * (this.possibleDirections.length))+1;
@@ -493,9 +543,17 @@ class Ghost extends Character {
     }
     this.tile = document.querySelector(`div[data-row='${this.x}'][data-column='${this.y}']`);
     if (this.tile.classList.contains('pacman')){
-      console.log('death ghost');
-      resetPositions();
-      return;    
+      if (ghostmode){
+        console.log('eatenGhost');
+        console.log(this.name);
+        this.numberEaten ++;
+        score += 200 * pacman.numberEaten;
+      }
+      else{
+        console.log('death ghost');
+        resetPositions();
+        return;    
+      }
     }
     this.tile.classList.add(this.name);
     this.tile.classList.add('ghost');
@@ -553,7 +611,58 @@ class Ghost extends Character {
     }
     this.animation = requestAnimationFrame(() => this.outOfBaseAnimate());
   }
+  
+  modeGhostOn(){
+    clearInterval(this.interval);
+    clearTimeout(this.offTimeout);
+    clearTimeout(this.blinkTimeout);
+    let img = document.createElement('img');
+    img.id = this.name;
+    img.src = "assets/img/ghost.png";
+    this.tile.innerHTML = '';
+    this.tile.appendChild(img);
+    ghostmode = true;
+    if(!ghostmode){
+      this.i = 0;
+    switch(this.direction){
+      case 'right':
+        this.direction = 'left';
+        this.y-=1;
+        break;
+      case 'left':
+        this.direction = 'right';
+        this.y+=1;
+        break;
+      case 'up':
+        this.direction = 'down';
+        this.x+=1
+        break;
+      case 'down':
+        this.direction = 'up';
+        this.x-=1;
+        break;
+      }
+    }
+    this.blinkTimeout = setTimeout(()=> {
+      this.interval = setInterval(() => {
+        this.tile.firstElementChild.classList.toggle('blink');
+      }, 500)
+    },4000);
+    this.offTimeout = setTimeout(()=> {
+      this.modeGhostOff();
+    }, 7000);
+  }
 
+  modeGhostOff(){
+    pacman.numberEaten = 1;
+    clearInterval(this.interval);
+    let img = document.createElement('img');
+    img.id = this.name;
+    img.src = `assets/img/${this.name}.png`;
+    this.tile.innerHTML = '';
+    this.tile.appendChild(img);
+    ghostmode = false;
+  }
   testDirections(){
     let possibleDirectionsArray = [];
     if(this.y+1 <= gridWidth && board[this.x][this.y+1] !== 1 && this.direction !== 'left'){  //test for direction is to avoid the ghosts turning around
@@ -570,10 +679,6 @@ class Ghost extends Character {
     }
     this.possibleDirections = possibleDirectionsArray;
     this.getRandomDirection();
-  }
-
-  backToBase(){
-    console.log('back');
   }
 }
 
@@ -630,9 +735,16 @@ function keydownHandler(e){
   }
 }
 
+function ghost(){
+  blinky.modeGhostOn();
+  inky.modeGhostOn();
+  pinky.modeGhostOn();
+  clyde.modeGhostOn();
+}
+
 document.addEventListener('keydown', keydownHandler);
 initCharacters();
-
-let timeoutPinky;
-let timeoutInky;
-let timeoutClyde;
+let highScore = parseInt(localStorage.getItem("highScore"));
+if (highScore){
+  highScoreNode.innerHTML = highScore;
+}

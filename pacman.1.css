@@ -66,6 +66,10 @@ body{
   flex-direction: column;
   display: none;
 }
+.blink{
+  filter: grayscale(100%) invert(100%);
+}
+
 h1{
   padding: 20px;
   color: yellow;
