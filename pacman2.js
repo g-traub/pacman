@@ -188,7 +188,9 @@ const resetPositions = () => {
 
   //ghosts
   cancelAnimationFrame(blinky.animation);
-  cancelAnimationFrame(inky.animation);cancelAnimationFrame(pinky.animation);cancelAnimationFrame(clyde.animation);
+  cancelAnimationFrame(inky.animation);
+  cancelAnimationFrame(pinky.animation);
+  cancelAnimationFrame(clyde.animation);
   clearTimeout(timeoutPinky);
   clearTimeout(timeoutInky);
   clearTimeout(timeoutClyde);
@@ -204,8 +206,9 @@ const resetPositions = () => {
   clearInterval(inky.interval);
   clearInterval(pinky.interval);
   clearInterval(clyde.interval);
-
+  //resets positions
   blinky.i = 0;
+  blinky.out = true;
   blinky.tile.className = 'empty';
   blinky.tile.innerHTML = '';
   blinky.x = 11;
@@ -250,11 +253,12 @@ const resetPositions = () => {
       highScoreNode.innerHTML = score;
       localStorage.setItem('highScore', score);
     }
+    board = initialBoard;
     game = false;
     gameOnNodes.style.display = 'none';
     gameoverNodes.style.display = 'flex';
   }
-  //resets positions
+
   if(game){
     if(levelUp){
       levelUp = false;
@@ -397,31 +401,26 @@ class Pacman extends Character {
     this.tile.classList.add(this.name);
     this.tile.classList.add(`pacman-${this.direction}`);
     //Handles score count
-    
+    let ghost;
     if (this.tile.classList.contains('ghost')){
       if(ghostmode){
+        if (this.tile.className.includes('blinky')){
+          ghost = blinky;
+        }
+        else if (this.tile.className.includes('pinky')){
+          ghost = pinky;
+        }
+        else if (this.tile.className.includes('inky')){
+          ghost = inky;
+        }
+        else {
+          ghost = clyde;
+        }
         console.log('eaten');
-        let ghostName;
-        if (pacman.x === blinky.x && pacman.y === blinky.y){
-          ghostName = 'blinky';
-        }
-        else if (pacman.x === pinky.x && pacman.y === pinky.y){
-          ghostName = 'pinky';
-        }
-        else if (pacman.x === inky.x && pacman.y === inky.y){
-          ghostName = 'inky';
-        }
-        else if (pacman.x === clyde.x && pacman.y === clyde.y){
-          ghostName = 'clyde';
-        }
-        console.log(ghostName);
-        console.log(`pacman : ${pacman.x} ; ${pacman.y}`);
-        console.log(`blinky : ${blinky.x} ; ${blinky.y}`);
-        console.log(`pinky : ${pinky.x} ; ${pinky.y}`);
-        console.log(`inky : ${inky.x} ; ${inky.y}`);
-        console.log(`clyde : ${clyde.x} ; ${clyde.y}`);
+        this.tile.classList.remove('dot');
         this.numberEaten ++;
         score += 200 * this.numberEaten;
+        backtoBase(ghost);
       }
       else{ 
         console.log('death');
@@ -432,7 +431,7 @@ class Pacman extends Character {
     else if (this.tile.classList.contains('big-dot')){
       this.tile.classList.remove('big-dot');
       this.tile.classList.remove('dot');
-      ghost();
+      modeGhost();
       score += 50;
       if (score >= level*2610){
         if(!document.querySelector('.dot')){
@@ -535,9 +534,15 @@ class Ghost extends Character {
   }
 
   move(){
+    if (reset){
+      return;
+    }
     this.tile.style.transform = 'none';
     this.tile.classList.remove(this.name);
     this.tile.classList.remove('ghost');
+    if(this.tile.firstElementChild){
+      this.tile.firstElementChild.classList.remove('blink');
+    }
     let node = this.tile.querySelector(`#${this.name}`);
     if(node){
       this.tile.removeChild(node);
@@ -546,9 +551,11 @@ class Ghost extends Character {
     if (this.tile.classList.contains('pacman')){
       if (ghostmode){
         console.log('eatenGhost');
-        console.log(this.name);
         this.numberEaten ++;
         score += 200 * pacman.numberEaten;
+        this.tile.classList.remove('dot');
+        backtoBase(this);
+        return;
       }
       else{
         console.log('death ghost');
@@ -645,7 +652,9 @@ class Ghost extends Character {
     ghostmode = true;
     this.blinkTimeout = setTimeout(()=> {
       this.interval = setInterval(() => {
-        this.tile.firstElementChild.classList.toggle('blink');
+        if (this.tile.firstElementChild){
+          this.tile.firstElementChild.classList.toggle('blink');
+        }
       }, 500)
     },4000);
     this.offTimeout = setTimeout(()=> {
@@ -656,10 +665,10 @@ class Ghost extends Character {
   modeGhostOff(){
     pacman.numberEaten = 1;
     clearInterval(this.interval);
+    this.tile.innerHTML = '';
     let img = document.createElement('img');
     img.id = this.name;
     img.src = `assets/img/${this.name}.png`;
-    this.tile.innerHTML = '';
     this.tile.appendChild(img);
     ghostmode = false;
   }
@@ -686,19 +695,19 @@ class Ghost extends Character {
 function initCharacters () {
   pacman = new Pacman('pacman',document.querySelector('.pacman'),23,14);
   blinky = new Ghost('blinky',document.querySelector('.blinky'),11,13, true);
-  pinky =  new  Ghost('pinky',document.querySelector('.pinky'),14,13, false);
+  pinky =  new Ghost('pinky',document.querySelector('.pinky'),14,13, false);
   inky = new Ghost('inky',document.querySelector('.inky'),14,11, false);
   clyde = new Ghost('clyde',document.querySelector('.clyde'),14,15, false);
 }
 
 
 function startMoving(){
+    reset = false;
     pacman.move();
     blinky.move();
     timeoutPinky = setTimeout(() => pinky.outOfBase(), 1000);
     timeoutInky = setTimeout(() => inky.outOfBase(), 8000);
     timeoutClyde = setTimeout(() => clyde.outOfBase(), 15000);
-    reset = false;
 }
 
 function keydownHandler(e){
@@ -735,11 +744,35 @@ function keydownHandler(e){
   }
 }
 
-function ghost(){
+function modeGhost(){
   blinky.modeGhostOn();
   inky.modeGhostOn();
   pinky.modeGhostOn();
   clyde.modeGhostOn();
+}
+
+function backtoBase(ghost){
+  console.log(ghost);
+  cancelAnimationFrame(ghost.animation);
+  clearInterval(ghost.interval);
+  clearTimeout(ghost.offTimeout);
+  clearTimeout(ghost.blinkTimeout);
+  ghost.i = 0;
+  ghost.out = false;
+  ghost.tile.classList.remove('blinky');
+  ghost.tile.classList.remove('pinky');
+  ghost.tile.classList.remove('inky');
+  ghost.tile.classList.remove('clyde');
+  ghost.tile.innerHTML = '';
+  ghost.x = 14;
+  ghost.y = 13;
+  ghost.tile = document.querySelector(`div[data-row='${ghost.x}'][data-column='${ghost.y}']`);
+  ghost.modeGhostOff();
+  setTimeout(() => {
+    if(!reset){
+      ghost.outOfBase()
+    }
+  },3000);
 }
 
 document.addEventListener('keydown', keydownHandler);
