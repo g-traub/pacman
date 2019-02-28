@@ -31,7 +31,7 @@ const initialBoard = [
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]];
 
-  let board = [
+ let board = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
     [1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1], 
@@ -81,7 +81,7 @@ const gameOnNodes = document.querySelector('.gameOn');
 const highScoreNode = document.querySelector('.highScore');
 
 let score = 0;
-let lives = 1;
+let lives = 3;
 let reset = true;
 let game = true;
 let level = 1;
@@ -116,7 +116,7 @@ const numerote = () => {
   }
 }
 
-const initBoard = (board) =>{
+const initBoard = board =>{
   for (let i=0 ; i<board.length; i++){
     for(let j=0 ; j<board[i].length ; j++){
       let currentTile = document.querySelector(`div[data-row='${i}'][data-column='${j}']`);
@@ -172,6 +172,7 @@ const initBoard = (board) =>{
 const resetPositions = () => {
   console.log('reset');
   reset = true;
+  ghostmode = false;
   //pacman
   cancelAnimationFrame(pacman.animation);
   pacman.tile.className = 'empty';
@@ -206,6 +207,7 @@ const resetPositions = () => {
   clearInterval(inky.interval);
   clearInterval(pinky.interval);
   clearInterval(clyde.interval);
+
   //resets positions
   blinky.i = 0;
   blinky.out = true;
@@ -213,6 +215,7 @@ const resetPositions = () => {
   blinky.tile.innerHTML = '';
   blinky.x = 11;
   blinky.y = 13;
+  blinky.speed = 13;
   blinky.tile = document.querySelector(`div[data-row='${blinky.x}'][data-column='${blinky.y}']`);
   inky.i = 0;
   inky.out = false;
@@ -221,6 +224,7 @@ const resetPositions = () => {
   inky.tile.style.transform = 'none';
   inky.x = 14;
   inky.y = 11;
+  inky.speed = 13;
   inky.tile = document.querySelector(`div[data-row='${inky.x}'][data-column='${inky.y}']`);
   pinky.i = 0;
   pinky.out = false;
@@ -229,6 +233,7 @@ const resetPositions = () => {
   pinky.tile.style.transform = 'none';
   pinky.x = 14;
   pinky.y = 13;
+  pinky.speed = 13;
   pinky.tile = document.querySelector(`div[data-row='${pinky.x}'][data-column='${pinky.y}']`);
   clyde.i = 0;
   clyde.out = false;
@@ -237,6 +242,7 @@ const resetPositions = () => {
   clyde.tile.style.transform = 'none';
   clyde.x = 14;
   clyde.y = 15;
+  clyde.speed = 13;
   clyde.tile = document.querySelector(`div[data-row='${clyde.x}'][data-column='${clyde.y}']`);
   //lives and gameover
   if(levelUp){
@@ -248,21 +254,24 @@ const resetPositions = () => {
   }
   livesNode.innerHTML = lives;
   if (lives === 0){
+    game = false;
     let highScore = parseInt(localStorage.getItem("highScore"));
     if (!highScore || score >= highScore){
       highScoreNode.innerHTML = score;
       localStorage.setItem('highScore', score);
     }
-    board = initialBoard;
-    game = false;
+    for (let i=0 ; i < board.length; i++){
+      board[i] = initialBoard[i].slice();
+    }
     gameOnNodes.style.display = 'none';
     gameoverNodes.style.display = 'flex';
   }
-
   if(game){
     if(levelUp){
       levelUp = false;
-      board = initialBoard;
+      for (let i=0 ; i<board.length; i++){
+        board[i] = initialBoard[i].slice();
+      }
     }
     initBoard(board);
   }
@@ -273,12 +282,13 @@ initBoard(initialBoard);
 livesNode.innerHTML = lives;
 
 class Character {
-  constructor(name,tile,x,y) {
+  constructor(name,tile,x,y, speed) {
     this.name = name;
     this.tile = tile;
     this.x = x;
     this.y = y;
     this.i = 0;
+    this.speed = speed
   }
 
   testNextTile(){
@@ -357,7 +367,7 @@ class Character {
           this.tile.style.transform = `translateY(-${this.i}%)`;
           break;
       }
-      this.i += 10;
+      this.i += this.speed;
       cancelAnimationFrame(this.animation);
       this.animation = requestAnimationFrame(() => this
       .animate());
@@ -373,8 +383,8 @@ class Character {
 }
 
 class Pacman extends Character {
-  constructor(name,tile,x,y){
-    super(name,tile,x,y);
+  constructor(name,tile,x,y,speed){
+    super(name,tile,x,y,speed);
     this.i = 0;
     this.direction ='right';
     this.nextDirection = undefined;
@@ -383,6 +393,7 @@ class Pacman extends Character {
     this.turnTest = false;
     this.animation;
     this.numberEaten = 1;
+    this.turnAround;
   }
 
   turn(){
@@ -497,8 +508,8 @@ class Pacman extends Character {
 }
 
 class Ghost extends Character {
-  constructor(name,tile,x,y,out){
-    super(name,tile,x,y);
+  constructor(name,tile,x,y, speed, out){
+    super(name,tile,x,y,speed);
     this.out = out;
     this.i = 0;
     this.direction = 'right';
@@ -596,7 +607,7 @@ class Ghost extends Character {
   }
 
   outOfBaseAnimate(){
-    this.i+=10
+    this.i+= 10;
     switch (this.direction){
       case 'right':
         this.tile.style.transform = `translateX(${this.i}%)`;
@@ -614,7 +625,7 @@ class Ghost extends Character {
       this.direction = 'up';
       this.move();
     }
-    else if(this.i===300){
+    else if(this.i === 300){
       this.x = 11;
       this.y = 13;
       this.i = 0;
@@ -625,31 +636,36 @@ class Ghost extends Character {
   }
   
   modeGhostOn(){
+    this.speed = 7;
+    console.log(this);
     clearInterval(this.interval);
     clearTimeout(this.offTimeout);
     clearTimeout(this.blinkTimeout);
+    if(!ghostmode){
+      console.log('executed');
+      switch(this.direction){
+        case 'right':
+          this.nextDirection = 'left';
+          break;
+        case 'left':
+          this.nextDirection = 'right';
+          break;
+        case 'up':
+          this.nextDirection = 'down';
+          break;
+        case 'down':
+          this.nextDirection = 'up';
+          break;
+      }
+    }
     let img = document.createElement('img');
     img.id = this.name;
     img.src = "assets/img/ghost.png";
     this.tile.innerHTML = '';
     this.tile.appendChild(img);
-    if(!ghostmode){
-    switch(this.direction){
-      case 'right':
-        this.nextDirection = 'left';
-        break;
-      case 'left':
-        this.nextDirection = 'right';
-        break;
-      case 'up':
-        this.nextDirection = 'down';
-        break;
-      case 'down':
-        this.nextDirection = 'up';
-        break;
-      }
+    if (this === clyde){
+      ghostmode = true;
     }
-    ghostmode = true;
     this.blinkTimeout = setTimeout(()=> {
       this.interval = setInterval(() => {
         if (this.tile.firstElementChild){
@@ -663,6 +679,7 @@ class Ghost extends Character {
   }
 
   modeGhostOff(){
+    this.speed = 13;
     pacman.numberEaten = 1;
     clearInterval(this.interval);
     this.tile.innerHTML = '';
@@ -693,11 +710,11 @@ class Ghost extends Character {
 
 //OBJECTS
 function initCharacters () {
-  pacman = new Pacman('pacman',document.querySelector('.pacman'),23,14);
-  blinky = new Ghost('blinky',document.querySelector('.blinky'),11,13, true);
-  pinky =  new Ghost('pinky',document.querySelector('.pinky'),14,13, false);
-  inky = new Ghost('inky',document.querySelector('.inky'),14,11, false);
-  clyde = new Ghost('clyde',document.querySelector('.clyde'),14,15, false);
+  pacman = new Pacman('pacman',document.querySelector('.pacman'),23,14,20);
+  blinky = new Ghost('blinky',document.querySelector('.blinky'),11,13, 13, true);
+  pinky =  new Ghost('pinky',document.querySelector('.pinky'),14,13, 13, false);
+  inky = new Ghost('inky',document.querySelector('.inky'),14,11, 13, false);
+  clyde = new Ghost('clyde',document.querySelector('.clyde'),14,15, 13, false);
 }
 
 
@@ -732,7 +749,8 @@ function keydownHandler(e){
   }
   else {
     if (e.keyCode === 32){
-      initBoard(initialBoard);
+      initBoard(board);
+      level = 1;
       score = 0;
       lives = 3;
       game = true;
@@ -753,6 +771,7 @@ function modeGhost(){
 
 function backtoBase(ghost){
   console.log(ghost);
+  ghost.speed = 13;
   cancelAnimationFrame(ghost.animation);
   clearInterval(ghost.interval);
   clearTimeout(ghost.offTimeout);
