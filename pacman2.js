@@ -79,6 +79,7 @@ const livesNode = document.querySelector('.lives');
 const gameoverNodes = document.querySelector('.gameover');
 const gameOnNodes = document.querySelector('.gameOn');
 const highScoreNode = document.querySelector('.highScore');
+const styleElem = document.head.appendChild(document.createElement('style'));
 
 let score = 0;
 let lives = 3;
@@ -213,6 +214,7 @@ const resetPositions = () => {
   blinky.out = true;
   blinky.tile.className = 'empty';
   blinky.tile.innerHTML = '';
+  blinky.tile.style.transform = 'none';
   blinky.x = 11;
   blinky.y = 13;
   blinky.speed = 13;
@@ -428,9 +430,16 @@ class Pacman extends Character {
           ghost = clyde;
         }
         console.log('eaten');
-        this.tile.classList.remove('dot');
+        if (this.tile.classList.contains('dot')){
+          this.tile.classList.remove('dot');
+          board[this.x][this.y] = 6;
+        }
+        let tempScore = 200 * this.numberEaten;
+        console.log(tempScore);
+        styleElem.innerHTML = `.pacman::after {content:'${tempScore}';}`;
+        setTimeout(() => { styleElem.innerHTML = ' '}, 500);
+        score += tempScore;
         this.numberEaten ++;
-        score += 200 * this.numberEaten;
         backtoBase(ghost);
       }
       else{ 
@@ -562,9 +571,16 @@ class Ghost extends Character {
     if (this.tile.classList.contains('pacman')){
       if (ghostmode){
         console.log('eatenGhost');
+        let tempScore = 200 * pacman.numberEaten;
+        console.log(tempScore);
+        styleElem.innerHTML = `.pacman::after {content:'${tempScore}';}`;
+        setTimeout(() => { styleElem.innerHTML = ' '}, 500);
+        score += tempScore;
         this.numberEaten ++;
-        score += 200 * pacman.numberEaten;
-        this.tile.classList.remove('dot');
+        if (this.tile.classList.contains('dot')){
+          this.tile.classList.remove('dot');
+          board[this.x][this.y] = 6;
+        }
         backtoBase(this);
         return;
       }
@@ -778,6 +794,7 @@ function backtoBase(ghost){
   clearTimeout(ghost.blinkTimeout);
   ghost.i = 0;
   ghost.out = false;
+  ghost.tile.classList.remove('ghost');
   ghost.tile.classList.remove('blinky');
   ghost.tile.classList.remove('pinky');
   ghost.tile.classList.remove('inky');
@@ -786,7 +803,13 @@ function backtoBase(ghost){
   ghost.x = 14;
   ghost.y = 13;
   ghost.tile = document.querySelector(`div[data-row='${ghost.x}'][data-column='${ghost.y}']`);
-  ghost.modeGhostOff();
+  ghost.speed = 13;
+  clearInterval(ghost.interval);
+  let img = document.createElement('img');
+  img.id = ghost.name;
+  img.src = `assets/img/${ghost.name}.png`;
+  ghost.tile.classList.add('ghostBase');
+  ghost.tile.appendChild(img);
   setTimeout(() => {
     if(!reset){
       ghost.outOfBase()
