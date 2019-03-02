@@ -87,7 +87,6 @@ let reset = true;
 let game = true;
 let level = 1;
 let levelUp = false;
-let ghostmode = false;
 let pacman;
 let blinky;
 let inky;
@@ -148,7 +147,7 @@ const initBoard = board =>{
           let inky = document.createElement('img');
           inky.src = "assets/img/inky.png";
           inky.id = 'inky';
-          currentTile.className = 'empty ghost inky';
+          currentTile.className = 'empty ghost inky inkyInitial';
           currentTile.appendChild(inky);
           break;
         case 'Pi': //P is pink (pinky)
@@ -173,11 +172,12 @@ const initBoard = board =>{
 const resetPositions = () => {
   console.log('reset');
   reset = true;
-  ghostmode = false;
+  
   //pacman
   cancelAnimationFrame(pacman.animation);
   pacman.tile.className = 'empty';
   pacman.tile.style.transform = 'none';
+  pacman.numberEaten = 1;
   pacman.i = 0;
   pacman.direction ='right';
   pacman.nextDirection = undefined;
@@ -210,6 +210,7 @@ const resetPositions = () => {
   clearInterval(clyde.interval);
 
   //resets positions
+  blinky.ghostmode = false;
   blinky.i = 0;
   blinky.out = true;
   blinky.tile.className = 'empty';
@@ -219,6 +220,7 @@ const resetPositions = () => {
   blinky.y = 13;
   blinky.speed = 13;
   blinky.tile = document.querySelector(`div[data-row='${blinky.x}'][data-column='${blinky.y}']`);
+  inky.ghostmode = false;
   inky.i = 0;
   inky.out = false;
   inky.tile.className = 'empty';
@@ -228,6 +230,7 @@ const resetPositions = () => {
   inky.y = 11;
   inky.speed = 13;
   inky.tile = document.querySelector(`div[data-row='${inky.x}'][data-column='${inky.y}']`);
+  pinky.ghostmode = false;
   pinky.i = 0;
   pinky.out = false;
   pinky.tile.className = 'empty';
@@ -237,6 +240,7 @@ const resetPositions = () => {
   pinky.y = 13;
   pinky.speed = 13;
   pinky.tile = document.querySelector(`div[data-row='${pinky.x}'][data-column='${pinky.y}']`);
+  clyde.ghostmode = false;
   clyde.i = 0;
   clyde.out = false;
   clyde.tile.className = 'empty';
@@ -416,19 +420,19 @@ class Pacman extends Character {
     //Handles score count
     let ghost;
     if (this.tile.classList.contains('ghost')){
-      if(ghostmode){
-        if (this.tile.className.includes('blinky')){
-          ghost = blinky;
-        }
-        else if (this.tile.className.includes('pinky')){
-          ghost = pinky;
-        }
-        else if (this.tile.className.includes('inky')){
-          ghost = inky;
-        }
-        else {
-          ghost = clyde;
-        }
+      if (this.tile.className.includes('blinky')){
+        ghost = blinky;
+      }
+      else if (this.tile.className.includes('pinky')){
+        ghost = pinky;
+      }
+      else if (this.tile.className.includes('inky')){
+        ghost = inky;
+      }
+      else {
+        ghost = clyde;
+      }
+      if (ghost.ghostmode){
         console.log('eaten');
         if (this.tile.classList.contains('dot')){
           this.tile.classList.remove('dot');
@@ -451,6 +455,7 @@ class Pacman extends Character {
     else if (this.tile.classList.contains('big-dot')){
       this.tile.classList.remove('big-dot');
       this.tile.classList.remove('dot');
+      
       modeGhost();
       score += 50;
       if (score >= level*2610){
@@ -529,6 +534,7 @@ class Ghost extends Character {
     this.interval;
     this.offTimeout;
     this.blinkTimeout;
+    this.ghostmode = false;
   }
   getRandomDirection(){
     let randomNumber = Math.floor(Math.random() * (this.possibleDirections.length))+1;
@@ -569,14 +575,13 @@ class Ghost extends Character {
     }
     this.tile = document.querySelector(`div[data-row='${this.x}'][data-column='${this.y}']`);
     if (this.tile.classList.contains('pacman')){
-      if (ghostmode){
+      if (this.ghostmode){
         console.log('eatenGhost');
         let tempScore = 200 * pacman.numberEaten;
-        console.log(tempScore);
         styleElem.innerHTML = `.pacman::after {content:'${tempScore}';}`;
         setTimeout(() => { styleElem.innerHTML = ' '}, 500);
         score += tempScore;
-        this.numberEaten ++;
+        pacman.numberEaten ++;
         if (this.tile.classList.contains('dot')){
           this.tile.classList.remove('dot');
           board[this.x][this.y] = 6;
@@ -593,7 +598,7 @@ class Ghost extends Character {
     this.tile.classList.add(this.name);
     this.tile.classList.add('ghost');
     if(node){
-      this.tile.appendChild(node);
+      this.tile.insertAdjacentElement('afterbegin', node);
     }
     if (this.nextDirection){
       this.direction = this.nextDirection;
@@ -652,58 +657,56 @@ class Ghost extends Character {
   }
   
   modeGhostOn(){
-    this.speed = 7;
-    console.log(this);
-    clearInterval(this.interval);
-    clearTimeout(this.offTimeout);
-    clearTimeout(this.blinkTimeout);
-    if(!ghostmode){
-      console.log('executed');
-      switch(this.direction){
-        case 'right':
-          this.nextDirection = 'left';
-          break;
-        case 'left':
-          this.nextDirection = 'right';
-          break;
-        case 'up':
-          this.nextDirection = 'down';
-          break;
-        case 'down':
-          this.nextDirection = 'up';
-          break;
-      }
-    }
-    let img = document.createElement('img');
-    img.id = this.name;
-    img.src = "assets/img/ghost.png";
-    this.tile.innerHTML = '';
-    this.tile.appendChild(img);
-    if (this === clyde){
-      ghostmode = true;
-    }
-    this.blinkTimeout = setTimeout(()=> {
-      this.interval = setInterval(() => {
-        if (this.tile.firstElementChild){
-          this.tile.firstElementChild.classList.toggle('blink');
+    if (this.out){
+      this.speed = 7;
+      clearInterval(this.interval);
+      clearTimeout(this.offTimeout);
+      clearTimeout(this.blinkTimeout);
+      if(!this.ghostmode){
+        switch(this.direction){
+          case 'right':
+            this.nextDirection = 'left';
+            break;
+          case 'left':
+            this.nextDirection = 'right';
+            break;
+          case 'up':
+            this.nextDirection = 'down';
+            break;
+          case 'down':
+            this.nextDirection = 'up';
+            break;
         }
-      }, 500)
-    },4000);
-    this.offTimeout = setTimeout(()=> {
-      this.modeGhostOff();
-    }, 7000);
+      }
+      let img = document.createElement('img');
+      img.id = this.name;
+      img.src = "assets/img/ghost.png";
+      this.tile.innerHTML = '';
+      this.tile.appendChild(img);
+      this.ghostmode = true;
+      this.blinkTimeout = setTimeout(()=> {
+        this.interval = setInterval(() => {
+          if (this.tile.firstElementChild){
+            this.tile.firstElementChild.classList.toggle('blink');
+          }
+        }, 500)
+      },4000);
+      this.offTimeout = setTimeout(()=> {
+        this.modeGhostOff();
+      }, 7000);
+    }
   }
 
   modeGhostOff(){
-    this.speed = 13;
     pacman.numberEaten = 1;
+    this.speed = 13;
     clearInterval(this.interval);
     this.tile.innerHTML = '';
     let img = document.createElement('img');
     img.id = this.name;
     img.src = `assets/img/${this.name}.png`;
     this.tile.appendChild(img);
-    ghostmode = false;
+    this.ghostmode = false;
   }
   testDirections(){
     let possibleDirectionsArray = [];
@@ -739,7 +742,10 @@ function startMoving(){
     pacman.move();
     blinky.move();
     timeoutPinky = setTimeout(() => pinky.outOfBase(), 1000);
-    timeoutInky = setTimeout(() => inky.outOfBase(), 8000);
+    timeoutInky = setTimeout(() => {
+      inky.outOfBase();
+      document.getElementById('inky').classList.remove('inkyInitial');
+    }, 8000);
     timeoutClyde = setTimeout(() => clyde.outOfBase(), 15000);
 }
 
@@ -786,7 +792,7 @@ function modeGhost(){
 }
 
 function backtoBase(ghost){
-  console.log(ghost);
+  ghost.ghostmode = false;
   ghost.speed = 13;
   cancelAnimationFrame(ghost.animation);
   clearInterval(ghost.interval);
@@ -815,6 +821,9 @@ function backtoBase(ghost){
       ghost.outOfBase()
     }
   },3000);
+  if (!blinky.ghostmode && !inky.ghostmode && !pinky.ghostmode && !clyde.ghostmode){
+    pacman.numberEaten = 1;
+  }
 }
 
 document.addEventListener('keydown', keydownHandler);

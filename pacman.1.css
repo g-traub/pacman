@@ -21,10 +21,19 @@ body{
   background-repeat: no-repeat;
 }
 .ghost, .ghostBase{
- text-align: center;
- opacity: 1;
- overflow: hidden;
- margin: -2px;
+  opacity: 1;
+  overflow: visible;
+}
+img:nth-of-type(2),
+img:nth-of-type(3),
+img:nth-of-type(4){
+  visibility: hidden;
+}
+
+.ghost img, .ghostBase img{
+  transform: translate(-5px, -5px);
+  width: 32px;
+  height: 32px;
 }
 .empty.pacman{
   background-size: 25px 24px;
