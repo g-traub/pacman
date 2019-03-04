@@ -13,7 +13,7 @@ const initialBoard = [
   [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 6, 6, 6, 'R', 6, 6, 6, 6, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
   [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
   [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
-  [1, 1, 1, 1, 1, 1, 0, 6, 6, 6, 1, 'B', 1,'Pi', 1, 'O', 1, 1, 6, 6, 6, 0, 1, 1, 1, 1, 1, 1], 
+  [2, 6, 6, 6, 6, 6, 0, 6, 6, 6, 1, 'B', 1,'Pi', 1, 'O', 1, 1, 6, 6, 6, 0, 6, 6, 6, 6, 6, 2], 
   [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
   [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
   [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
@@ -46,7 +46,7 @@ const initialBoard = [
     [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 6, 6, 6, 'R', 6, 6, 6, 6, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
     [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
     [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
-    [1, 1, 1, 1, 1, 1, 0, 6, 6, 6, 1, 'B', 1,'Pi', 1, 'O', 1, 1, 6, 6, 6, 0, 1, 1, 1, 1, 1, 1], 
+    [2, 6, 6, 6, 6, 6, 0, 6, 6, 6, 1, 'B', 1,'Pi', 1, 'O', 1, 1, 6, 6, 6, 0, 6, 6, 6, 6, 6, 2], 
     [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
     [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
     [1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1], 
@@ -124,6 +124,9 @@ const initBoard = board =>{
         case 1: //1 is a wall
         currentTile.className = 'wall';
           break;
+        case 2:
+        currentTile.className = 'empty portal';
+        break;
         case 0: // 0 is a dot
         currentTile.className = 'dot empty';
           break;
@@ -305,6 +308,16 @@ class Character {
           this.test = true;
         }
         else {
+          if (this.tile.classList.contains('portal')){
+            if (this.tile.dataset.column === "27"){
+              console.log('executed');
+              this.y = 0;
+            } else {
+              this.y = 27;
+            }
+            this.test = true;
+            return;
+          }
           this.test = false;
         }
         break;
@@ -314,6 +327,16 @@ class Character {
           this.test = true;
         }
         else {
+          if (this.tile.classList.contains('portal')){
+            if (this.tile.dataset.column === "27"){
+              console.log('executed');
+              this.y = 0;
+            } else {
+              this.y = 27;
+            }
+            this.test = true;
+            return;
+          }
           this.test = false;
         }
         break;
@@ -340,24 +363,26 @@ class Character {
 
   animate(){
     if(this.i<100){
-      if(this.i===0 && this.name === 'pacman'){
-        if (this.nextDirection !== this.direction){
-          this.testNextDirection();
-          if(this.turnTest){
-            this.turn();
-            this.direction = this.nextDirection;
+      if(this.i===0){
+        if (this.name === 'pacman'){
+          if (this.nextDirection !== this.direction){
+            this.testNextDirection();
+            if(this.turnTest){
+              this.turn();
+              this.direction = this.nextDirection;
+            }
+          }
+          this.testNextTile();
+          if(!this.test){
+            this.tile.style.transform = 'none';
+            this.stopped  = true;
+            return;
           }
         }
-        this.testNextTile();
-        if(!this.test){
+        else if(this.name !== 'pacman'){
           this.tile.style.transform = 'none';
-          this.stopped  = true;
-          return;
+          this.testDirections();
         }
-      }
-      else if(this.i===0 && this.name !== 'pacman'){
-        this.tile.style.transform = 'none';
-        this.testDirections();
       }
       switch (this.direction){
         case 'right':
@@ -417,6 +442,7 @@ class Pacman extends Character {
     this.tile = document.querySelector(`div[data-row='${this.x}'][data-column='${this.y}']`);
     this.tile.classList.add(this.name);
     this.tile.classList.add(`pacman-${this.direction}`);
+
     //Handles score count
     let ghost;
     if (this.tile.classList.contains('ghost')){
@@ -709,6 +735,16 @@ class Ghost extends Character {
     this.ghostmode = false;
   }
   testDirections(){
+    
+    if (this.tile.classList.contains('portal') && this.possibleDirections){
+      if (this.tile.dataset.column === "27"){
+        this.y = 0;
+      } else {
+        this.y = 27;
+      }
+      this.possibleDirections = false;
+      return;
+    }
     let possibleDirectionsArray = [];
     if(this.y+1 <= gridWidth && board[this.x][this.y+1] !== 1 && this.direction !== 'left'){  //test for direction is to avoid the ghosts turning around
       possibleDirectionsArray.push(1);
@@ -723,13 +759,14 @@ class Ghost extends Character {
       possibleDirectionsArray.push(4);
     }
     this.possibleDirections = possibleDirectionsArray;
+    console.log(this.possibleDirections);
     this.getRandomDirection();
   }
 }
 
 //OBJECTS
 function initCharacters () {
-  pacman = new Pacman('pacman',document.querySelector('.pacman'),23,14,20);
+  pacman = new Pacman('pacman',document.querySelector('.pacman'),23,14,10);
   blinky = new Ghost('blinky',document.querySelector('.blinky'),11,13, 13, true);
   pinky =  new Ghost('pinky',document.querySelector('.pinky'),14,13, 13, false);
   inky = new Ghost('inky',document.querySelector('.inky'),14,11, 13, false);
