@@ -17,7 +17,6 @@ body{
 }
 .game {
   position: relative;
-  margin-top: 30px;
   width: fit-content;
   background-color: black;
 }
@@ -39,11 +38,11 @@ body{
   right: -10%;
  }
 .container {
-  width: 583px;
-  height: 640px;
+  width: 466px;
+  height: 512px;
   margin: 42px auto 8px auto;
   display: grid;
-  grid-template: repeat(31, 20.6px) /repeat(28, 20.8px);
+  grid-template: repeat(31, 16.5px) /repeat(28, 16.6px);
   background-image: url('assets/img/pacman-board.png');
   background-size:100%;
   background-repeat: no-repeat;
@@ -60,11 +59,11 @@ img:nth-of-type(4){
 
 .ghost img, .ghostBase img{
   transform: translate(-4px, -4px);
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
 }
 .empty.pacman{
-  background-size: 20px 19.2px;
+  background-size: 16px 15.4px;
   background-repeat: no-repeat;
   background-position: center;
   position: relative;
@@ -85,19 +84,19 @@ img:nth-of-type(4){
   content:' ';
   color: rgb(0, 211, 197);
   position: relative;
-  top: -16.8px;
+  top: -13.4px;
   right: -19.2px;
-  font-size: 1.7rem;
+  font-size: 1rem;
 }
 .dot{
   background-image: url('assets/img/dot-pacman.png');
-  background-size: 12px 12px;
+  background-size: 10px 10px;
   background-position: center center;
   background-repeat: no-repeat;
 }
 .big-dot{
   background-image: url('assets/img/dot-pacman.png');
-  background-size: 28px 28px;
+  background-size: 23px 23px;
   background-position: center center;
   background-repeat: no-repeat;
 }
