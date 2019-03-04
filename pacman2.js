@@ -173,7 +173,6 @@ const initBoard = board =>{
 }
 
 const resetPositions = () => {
-  console.log('reset');
   reset = true;
   
   //pacman
@@ -310,7 +309,6 @@ class Character {
         else {
           if (this.tile.classList.contains('portal')){
             if (this.tile.dataset.column === "27"){
-              console.log('executed');
               this.y = 0;
             } else {
               this.y = 27;
@@ -329,7 +327,6 @@ class Character {
         else {
           if (this.tile.classList.contains('portal')){
             if (this.tile.dataset.column === "27"){
-              console.log('executed');
               this.y = 0;
             } else {
               this.y = 27;
@@ -459,13 +456,11 @@ class Pacman extends Character {
         ghost = clyde;
       }
       if (ghost.ghostmode){
-        console.log('eaten');
         if (this.tile.classList.contains('dot')){
           this.tile.classList.remove('dot');
           board[this.x][this.y] = 6;
         }
         let tempScore = 200 * this.numberEaten;
-        console.log(tempScore);
         styleElem.innerHTML = `.pacman::after {content:'${tempScore}';}`;
         setTimeout(() => { styleElem.innerHTML = ' '}, 500);
         score += tempScore;
@@ -473,7 +468,6 @@ class Pacman extends Character {
         backtoBase(ghost);
       }
       else{ 
-        console.log('death');
         resetPositions();  
         return; 
       }
@@ -602,7 +596,6 @@ class Ghost extends Character {
     this.tile = document.querySelector(`div[data-row='${this.x}'][data-column='${this.y}']`);
     if (this.tile.classList.contains('pacman')){
       if (this.ghostmode){
-        console.log('eatenGhost');
         let tempScore = 200 * pacman.numberEaten;
         styleElem.innerHTML = `.pacman::after {content:'${tempScore}';}`;
         setTimeout(() => { styleElem.innerHTML = ' '}, 500);
@@ -616,7 +609,6 @@ class Ghost extends Character {
         return;
       }
       else{
-        console.log('death ghost');
         resetPositions();
         return;    
       }
@@ -759,7 +751,6 @@ class Ghost extends Character {
       possibleDirectionsArray.push(4);
     }
     this.possibleDirections = possibleDirectionsArray;
-    console.log(this.possibleDirections);
     this.getRandomDirection();
   }
 }

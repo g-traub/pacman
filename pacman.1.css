@@ -1,4 +1,14 @@
+@font-face {
+  font-family: 'ArcadeClassic';
+  src: url('assets/ArcadeClassic.woff2') format('woff2'),
+      url('assets/ArcadeClassic.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body{
+  font-family: 'ArcadeClassic';
+  letter-spacing: .1rem;
   background-color: black;
   display: flex;
   flex-direction: column;
@@ -13,7 +23,6 @@ body{
 }
 .shade{
   position: absolute;
- /*  border: 1px solid green; */
   z-index: 1;
   width: 12%;
   height: 4.7%;
@@ -21,20 +30,20 @@ body{
 }
 .shade:first-of-type{
   background: linear-gradient(to left, rgba(0,0,0,0) 10%, #000 30%);
- top: 38%; 
+ top: 38.3%; 
  left: -10%;
 }
 .shade:nth-of-type(2){
   background: linear-gradient(to right, rgba(0,0,0,0)10%, #000 30%);
-  top: 38%;
+  top: 38.3%;
   right: -10%;
  }
 .container {
-  width: 700px;
-  height: 768px;
-  margin: 50px auto;
+  width: 583px;
+  height: 640px;
+  margin: 42px auto 8px auto;
   display: grid;
-  grid-template: repeat(31,24.8px) /repeat(28, 25px);
+  grid-template: repeat(31, 20.6px) /repeat(28, 20.8px);
   background-image: url('assets/img/pacman-board.png');
   background-size:100%;
   background-repeat: no-repeat;
@@ -50,12 +59,12 @@ img:nth-of-type(4){
 }
 
 .ghost img, .ghostBase img{
-  transform: translate(-5px, -5px);
-  width: 32px;
-  height: 32px;
+  transform: translate(-4px, -4px);
+  width: 26px;
+  height: 26px;
 }
 .empty.pacman{
-  background-size: 25px 24px;
+  background-size: 20px 19.2px;
   background-repeat: no-repeat;
   background-position: center;
   position: relative;
@@ -76,19 +85,19 @@ img:nth-of-type(4){
   content:' ';
   color: rgb(0, 211, 197);
   position: relative;
-  top: -21px;
-  right: -30px;
+  top: -16.8px;
+  right: -19.2px;
   font-size: 1.7rem;
 }
 .dot{
   background-image: url('assets/img/dot-pacman.png');
-  background-size: 15px 15px;
+  background-size: 12px 12px;
   background-position: center center;
   background-repeat: no-repeat;
 }
 .big-dot{
   background-image: url('assets/img/dot-pacman.png');
-  background-size: 35px 35px;
+  background-size: 28px 28px;
   background-position: center center;
   background-repeat: no-repeat;
 }
