@@ -360,7 +360,7 @@ class Character {
 
   animate(){
     if(this.i<100){
-      if(this.i===0){
+      if(this.i === 0){
         if (this.name === 'pacman'){
           if (this.nextDirection !== this.direction){
             this.testNextDirection();
@@ -557,22 +557,28 @@ class Ghost extends Character {
     this.ghostmode = false;
   }
   getRandomDirection(){
+    console.log('getRandomDirection');
     let randomNumber = Math.floor(Math.random() * (this.possibleDirections.length))+1;
+    console.log(randomNumber);
     let randomDirection = this.possibleDirections[randomNumber-1];
     switch (randomDirection){
       case 1 :
+      console.log('1');
         this.direction = 'right';
         this.y+=1;
         break;
       case 2 :
+        console.log('2');
         this.direction = 'left';
         this.y-=1;
         break;
       case 3 :
+      console.log('3');
         this.direction = 'down';
         this.x+=1;
         break;
       case 4 :
+        console.log('4');
         this.direction = 'up';
         this.x-=1;
         break;
@@ -580,6 +586,8 @@ class Ghost extends Character {
   }
 
   move(){
+    console.log(this.x);
+    console.log(this.y);
     if (reset){
       return;
     }
@@ -615,6 +623,7 @@ class Ghost extends Character {
     }
     this.tile.classList.add(this.name);
     this.tile.classList.add('ghost');
+  
     if(node){
       this.tile.insertAdjacentElement('afterbegin', node);
     }
@@ -664,12 +673,13 @@ class Ghost extends Character {
       this.direction = 'up';
       this.move();
     }
-    else if(this.i === 300){
+    else if(this.i >= 300){
       this.x = 11;
       this.y = 13;
       this.i = 0;
       this.out = true;
       this.move();
+      return;
     }
     this.animation = requestAnimationFrame(() => this.outOfBaseAnimate());
   }
@@ -726,8 +736,8 @@ class Ghost extends Character {
     this.tile.appendChild(img);
     this.ghostmode = false;
   }
+
   testDirections(){
-    
     if (this.tile.classList.contains('portal') && this.possibleDirections){
       if (this.tile.dataset.column === "27"){
         this.y = 0;
@@ -751,6 +761,7 @@ class Ghost extends Character {
       possibleDirectionsArray.push(4);
     }
     this.possibleDirections = possibleDirectionsArray;
+    console.log(this.possibleDirections);
     this.getRandomDirection();
   }
 }
@@ -767,14 +778,14 @@ function initCharacters () {
 
 function startMoving(){
     reset = false;
-    pacman.move();
-    blinky.move();
+    /* pacman.move(); */
+    /* blinky.move(); */
     timeoutPinky = setTimeout(() => pinky.outOfBase(), 1000);
-    timeoutInky = setTimeout(() => {
+    /* timeoutInky = setTimeout(() => {
       inky.outOfBase();
       document.getElementById('inky').classList.remove('inkyInitial');
     }, 8000);
-    timeoutClyde = setTimeout(() => clyde.outOfBase(), 15000);
+    timeoutClyde = setTimeout(() => clyde.outOfBase(), 15000); */
 }
 
 function keydownHandler(e){
