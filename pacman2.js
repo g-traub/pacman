@@ -557,28 +557,22 @@ class Ghost extends Character {
     this.ghostmode = false;
   }
   getRandomDirection(){
-    console.log('getRandomDirection');
     let randomNumber = Math.floor(Math.random() * (this.possibleDirections.length))+1;
-    console.log(randomNumber);
     let randomDirection = this.possibleDirections[randomNumber-1];
     switch (randomDirection){
       case 1 :
-      console.log('1');
         this.direction = 'right';
         this.y+=1;
         break;
       case 2 :
-        console.log('2');
         this.direction = 'left';
         this.y-=1;
         break;
       case 3 :
-      console.log('3');
         this.direction = 'down';
         this.x+=1;
         break;
       case 4 :
-        console.log('4');
         this.direction = 'up';
         this.x-=1;
         break;
@@ -586,8 +580,6 @@ class Ghost extends Character {
   }
 
   move(){
-    console.log(this.x);
-    console.log(this.y);
     if (reset){
       return;
     }
@@ -761,7 +753,6 @@ class Ghost extends Character {
       possibleDirectionsArray.push(4);
     }
     this.possibleDirections = possibleDirectionsArray;
-    console.log(this.possibleDirections);
     this.getRandomDirection();
   }
 }
@@ -778,14 +769,14 @@ function initCharacters () {
 
 function startMoving(){
     reset = false;
-    /* pacman.move(); */
-    /* blinky.move(); */
+    pacman.move();
+    blinky.move();
     timeoutPinky = setTimeout(() => pinky.outOfBase(), 1000);
-    /* timeoutInky = setTimeout(() => {
+    timeoutInky = setTimeout(() => {
       inky.outOfBase();
       document.getElementById('inky').classList.remove('inkyInitial');
     }, 8000);
-    timeoutClyde = setTimeout(() => clyde.outOfBase(), 15000); */
+    timeoutClyde = setTimeout(() => clyde.outOfBase(), 15000);
 }
 
 function keydownHandler(e){
